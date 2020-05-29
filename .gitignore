@@ -32,4 +32,4 @@ out/
 .vscode/
 
 
-resources/local/
+src/main/resources/local
