@@ -32,3 +32,4 @@ out/
 .vscode/
 
 src/main/resources/local/application.properties
+src/main/resources/develop/application.properties
