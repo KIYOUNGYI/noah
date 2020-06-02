@@ -39,28 +39,26 @@ dependencies {
 	// QueryDSL
 
 	// https://mvnrepository.com/artifact/com.querydsl/querydsl-jpa
-	compile group: 'com.querydsl', name: 'querydsl-jpa', version: '4.2.1'
+	compile group: 'com.querydsl', name: 'querydsl-jpa'
 
 	// https://mvnrepository.com/artifact/com.querydsl/querydsl-apt
-	compile group: 'com.querydsl', name: 'querydsl-apt', version: '4.2.1'
-
-	// https://mvnrepository.com/artifact/com.querydsl/querydsl-hibernate-search
-	compile group: 'com.querydsl', name: 'querydsl-hibernate-search', version: '4.2.1'
-
+	compile group: 'com.querydsl', name: 'querydsl-apt'
 
 	// hibernate-search
 
 	// https://mvnrepository.com/artifact/org.hibernate/hibernate-search-engine
 //    compile group: 'org.hibernate', name: 'hibernate-search-engine', version: '5.11.5.Final'
+	// https://mvnrepository.com/artifact/com.querydsl/querydsl-hibernate-search
+//	compile group: 'com.querydsl', name: 'querydsl-hibernate-search', version: '4.2.1'
 
 	// https://mvnrepository.com/artifact/org.hibernate/hibernate-search-orm
 	compile group: 'org.hibernate', name: 'hibernate-search-orm', version: '5.11.5.Final'
 
 	// https://mvnrepository.com/artifact/org.infinispan/infinispan-directory-provider
-	compile group: 'org.infinispan', name: 'infinispan-directory-provider', version: '10.1.5.Final'
+	compile group: 'org.infinispan', name: 'infinispan-directory-provider'
 
 	// https://mvnrepository.com/artifact/mysql/mysql-connector-java
-	compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.11'
+	compile group: 'mysql', name: 'mysql-connector-java'
 
 }
 

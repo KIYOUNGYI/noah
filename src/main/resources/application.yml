@@ -25,10 +25,10 @@ spring:
       hibernate:
         format_sql: false
         enable_lazy_load_no_trans: true
-        search:
-          default:
-            directory_provider: filesystem
-            indexBase: lucene/indexes/
-          lucene_version: LUCENE_CURRENT
-          indexing_strategy: event
+#        search:
+#          default:
+#            directory_provider: filesystem
+#            indexBase: lucene/indexes/
+#          lucene_version: LUCENE_CURRENT
+#          indexing_strategy: event
 
