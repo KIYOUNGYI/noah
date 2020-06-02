@@ -35,7 +35,7 @@ public class Pouch
 
     private Long recommendCount;
 
-//    TODO
+    //TODO
     private int isDisplay;
 
     //TODO
@@ -50,8 +50,10 @@ public class Pouch
     //TODO
     private char[] end_date;
 
+    //TODO
     private char[] create_date;
 
+    //TODO
     private char[] modified_date;
 
     private String fileOrgName;
