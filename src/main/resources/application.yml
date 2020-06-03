@@ -25,8 +25,9 @@ spring:
     database-platform: app.noah.config.MySQLDialectCustom
     properties:
       hibernate:
-        format_sql: false
+        format_sql: true
         enable_lazy_load_no_trans: true
+        default_batch_fetch_size: 1000 # fetch join 최적화
 #        search:
 #          default:
 #            directory_provider: filesystem
@@ -34,3 +35,6 @@ spring:
 #          lucene_version: LUCENE_CURRENT
 #          indexing_strategy: event
 
+logging:
+  level:
+    org.hibernate.SQL: debug

@@ -60,6 +60,10 @@ dependencies {
 	// https://mvnrepository.com/artifact/mysql/mysql-connector-java
 	compile group: 'mysql', name: 'mysql-connector-java'
 
+	//external
+	// 쿼리 파라미터 로그
+	implementation "com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.6.1"
+
 }
 
 test {

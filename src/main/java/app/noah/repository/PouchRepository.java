@@ -24,13 +24,19 @@ public class PouchRepository
         return em.createQuery("select p from Pouch p",Pouch.class).getResultList();
     }
 
-    public List<PouchCategory> findAll2()
-    {
-        return em.createQuery("select p from PouchCategory p", PouchCategory.class).getResultList();
-    }
 
     public void save(Pouch p)
     {
         em.persist(p);
+    }
+
+
+    public List<Pouch> findAllUsingFetchJoin()
+    {
+        return em.createQuery("select p from Pouch p "
+                                        + " join fetch  p.pouchCategory pc "
+                                      , Pouch.class
+        ).getResultList();
+
     }
 }
