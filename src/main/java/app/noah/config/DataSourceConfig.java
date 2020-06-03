@@ -28,6 +28,7 @@ public class DataSourceConfig
     @Bean
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
+
         dataSource.setDriverClassName(driverName);
         dataSource.setUrl(url);
         dataSource.setUsername(username);
