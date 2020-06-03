@@ -8,6 +8,9 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static javax.persistence.FetchType.*;
 
 @Entity
@@ -56,6 +59,7 @@ public class AdminAccount {
     /**
      * 아래부터 추가
      */
-    @OneToOne(mappedBy = "adminAccount")
-    private Pouch pouch;
+    @OneToMany(mappedBy = "adminAccount")
+    private List<Pouch> pouch = new ArrayList<>();
+
 }

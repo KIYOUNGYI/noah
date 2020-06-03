@@ -5,6 +5,7 @@ import app.noah.repository.PouchRepository;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
@@ -38,6 +39,18 @@ public class PouchSimpleApiController
     public List<SimplePouchDto> d3()
     {
         List<Pouch> pouches = pouchRepository.findAllUsingFetchJoin();
+        List<SimplePouchDto> result = pouches.stream().map(p->new SimplePouchDto(p)).collect(toList());
+        return result;
+    }
+
+    @GetMapping("/api/v3.1/simple-pouch")
+    public List<SimplePouchDto> d3
+            (
+                    @RequestParam(value="offset",defaultValue = "0") int offset,
+                    @RequestParam(value="limit",defaultValue = "20") int limit
+            )
+    {
+        List<Pouch> pouches = pouchRepository.findAllUsingFetchJoin(offset,limit);
         List<SimplePouchDto> result = pouches.stream().map(p->new SimplePouchDto(p)).collect(toList());
         return result;
     }

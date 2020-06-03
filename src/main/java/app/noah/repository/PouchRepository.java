@@ -35,8 +35,20 @@ public class PouchRepository
     {
         return em.createQuery("select p from Pouch p "
                                         + " join fetch  p.pouchCategory pc "
+                                        + " join fetch p.brand b"
+                                        + " join fetch p.adminAccount a"
                                       , Pouch.class
         ).getResultList();
 
+    }
+
+    public List<Pouch> findAllUsingFetchJoin(int offset, int limit)
+    {
+        return em.createQuery("select p from Pouch p "
+                        + " join fetch  p.pouchCategory pc "
+                        + " join fetch p.brand b"
+                        + " join fetch p.adminAccount a"
+                ,Pouch.class)
+                .setFirstResult(offset).setMaxResults(limit).getResultList();
     }
 }
