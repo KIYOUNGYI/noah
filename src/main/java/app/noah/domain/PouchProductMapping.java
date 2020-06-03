@@ -45,7 +45,9 @@ public class PouchProductMapping
 
     private String requestText;
     private Long requestImg;
-    private boolean isConfirm;
+    @Column(nullable = true)
+//    private boolean isConfirm;
+    private Boolean isConfirm;
     @Column(name="create_date")
     private String createDate;
     @Column(name="modified_date")

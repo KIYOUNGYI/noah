@@ -30,7 +30,7 @@ public class PouchBanner
     private Pouch pouch;
 
     private String bannerTitle;
-    private int bannerLinkType;
+    private Integer bannerLinkType;
     private String bannerLinkCode;
     private Long bannerImg;
     private Long sortKey;
