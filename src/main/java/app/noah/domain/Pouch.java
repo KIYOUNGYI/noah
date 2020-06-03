@@ -1,29 +1,68 @@
 package app.noah.domain;
 
+import app.noah.domain.glowpickorm.AdminAccount;
+import app.noah.domain.glowpickorm.Brand;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static javax.persistence.FetchType.LAZY;
 
 @Entity
 @Table(name="pouch",catalog = "user_glowmee", schema = "user_glowmee")
 @Getter @Setter
 public class Pouch
 {
+    /**
+     * pouch 와 brand 는 다대일 관계
+     * pouch 와 pouchcategory는 다대일 관계
+     * pouch 와 adminAcoount 는 다대일 관계
+     * =====================================================
+     * pouch 와 wishuserpouchmapping은 일대다 관계  (readOnly)
+     * pouch 와 pouchproductmapping은 일대다 관계 (readOnly)
+     * pouch 와 pouchBanner 는 일대다 관계 (readOnly)
+     * pouch 와 Pouchcomment 는 일대다 관계 (readOnly)
+     */
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="idPouch")
     private Long id;
-
-    //idregiter 는 여러개의 Pouch 를 작성할 수 있다.
-    //adminAccount와 pouch는 1 대 다 관계
+    /**
+     * 다대일 관계
+     */
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name="idRegister")
     private AdminAccount adminAccount;
 
-    // Todo
-    private Long idPouchCategory;
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name="idBrand")
+    private Brand brand;
 
-    // TODO
-    private Long idBrand;
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name="idPouchCategory")
+    private PouchCategory pouchCategory;
+
+    /**
+     * 일대다 관계
+     */
+    @OneToMany(mappedBy = "pouch")
+    private List<WishUserPouchMapping> wishUserPouchMappingList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "pouch")
+    private List<PouchComment> pouchCommentList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "pouch")
+    private List<PouchProductMapping>  pouchProductMappingsList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "pouch")
+    private List<PouchBanner> pouchBannerList = new ArrayList<>();
+
+
 
     private String pouchTitle;
 
@@ -35,26 +74,23 @@ public class Pouch
 
     private Long recommendCount;
 
-    //TODO
-    private int isDisplay;
+    private boolean isDisplay;
 
-    //TODO
     private boolean todayPouch;
 
-    //TODO
     private boolean editerPick;
 
-    //TODO
-    private char[] start_date;
+    @Column(name="start_date")
+    private String startDate;
 
-    //TODO
-    private char[] end_date;
+    @Column(name="end_date")
+    private String endDate;
 
-    //TODO
-    private char[] create_date;
+    @Column(name="create_date")
+    private String createDate;
 
-    //TODO
-    private char[] modified_date;
+    @Column(name="modified_date")
+    private String modifiedDate;
 
     private String fileOrgName;
 
@@ -63,13 +99,10 @@ public class Pouch
     private String fileDir;
 
     private Long fileSize;
-
-    //TODO
     private String fileType;
-
     private int orderNum;
-
-    private Long hits_count;
+    @Column(name="hits_count")
+    private Long hitsCount;
 
     /**
      * CREATE TABLE `pouch` (
@@ -98,9 +131,9 @@ public class Pouch
      *   `orderNum` int(11) DEFAULT NULL COMMENT '정렬 순서',
      *   `hits_count` int(11) NOT NULL DEFAULT '0',
      *   PRIMARY KEY (`idPouch`),
-     *   KEY `FK_PouchCategory_TO_Pouch` (`idPouchCategory`),
-     *   KEY `FK_Brand_TO_Pouch` (`idBrand`),
-     *   KEY `FK_AdminAccount_TO_Pouch_idx` (`idRegister`),
+     *   KEY `FK_PouchCategory_TO_Pouch` (`idPouchCategory`), v
+     *   KEY `FK_Brand_TO_Pouch` (`idBrand`), v
+     *   KEY `FK_AdminAccount_TO_Pouch_idx` (`idRegister`), v
      *   CONSTRAINT `FK_AdminAccount_TO_Pouch` FOREIGN KEY (`idRegister`) REFERENCES `adminAccount` (`idRegister`),
      *   CONSTRAINT `FK_Brand_TO_Pouch` FOREIGN KEY (`idBrand`) REFERENCES `brand` (`idBrand`),
      *   CONSTRAINT `FK_PouchCategory_TO_Pouch` FOREIGN KEY (`idPouchCategory`) REFERENCES `pouchcategory` (`idPouchCategory`)

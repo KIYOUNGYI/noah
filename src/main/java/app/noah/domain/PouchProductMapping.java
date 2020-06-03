@@ -1,7 +1,47 @@
 package app.noah.domain;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import javax.persistence.*;
+
+import static javax.persistence.FetchType.*;
+
+@Entity
+@Getter @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PouchProductMapping
 {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="idPouchProduct")
+    private Long id;
+
+    //TODO
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name="idPouch")
+    private Pouch pouch;
+    private Long idProduct;
+    private Long idRegister;
+    private Long adminIdRegister;
+    //TODO End
+
+    private String requestText;
+    private Long requestImg;
+    private boolean isConfirm;
+    @Column(name="create_date")
+    private String createDate;
+    @Column(name="modified_date")
+    private String modifiedDate;
+
+    private String fileOrgName;
+    private String fileSaveName;
+    private String fileDir;
+    private Long fileSize;
+    private String fileType;
+
     /**
      * CREATE TABLE `pouchproductmapping` (
      *   `idPouchProduct` int(11) NOT NULL AUTO_INCREMENT COMMENT '맵핑항번',
@@ -29,4 +69,5 @@ public class PouchProductMapping
      *   CONSTRAINT `FK_Register_TO_PouchProductMapping` FOREIGN KEY (`idRegister`) REFERENCES `register` (`idRegister`) ON DELETE NO ACTION ON UPDATE NO ACTION
      * ) ENGINE=InnoDB AUTO_INCREMENT=99887 DEFAULT CHARSET=utf8 COMMENT='픽과 제품간 맵핑';
      */
+
 }

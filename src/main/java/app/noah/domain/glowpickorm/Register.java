@@ -1,16 +1,15 @@
-package app.noah.domain;
+package app.noah.domain.glowpickorm;
 
 /**
  * 복붙
  */
 
 import java.io.Serializable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.*;
+
+import app.noah.domain.PouchComment;
 import lombok.Data;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Field;
@@ -18,6 +17,8 @@ import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.NumericField;
 import org.hibernate.search.annotations.SortableField;
 import org.hibernate.search.annotations.Store;
+
+import static javax.persistence.FetchType.*;
 
 @Entity
 @Indexed

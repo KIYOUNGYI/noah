@@ -1,7 +1,41 @@
 package app.noah.domain;
 
+import javax.persistence.*;
+
+import static javax.persistence.FetchType.*;
+
+@Entity
+@Table(name="pouchcomment",catalog = "user_glowmee",schema = "user_glowmee")
 public class PouchComment
 {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="idPouchComment")
+    private Long id;
+
+    /**
+     * 일대다 관계
+     */
+//    @OneToMany(mappedBy = "")
+//    private Long idRegister;
+    /**
+     * 다대일 관계
+     */
+    @ManyToOne(fetch= LAZY) @JoinColumn(name="idPouch")
+    private Pouch pouch;
+
+    private String pouchComment;
+
+    private boolean isDisplay;
+
+    private boolean isPushConfirm;
+
+    private String ipAddress;
+
+    @Column(name="create_date")
+    private String createDate;
+
+
     /**
      * CREATE TABLE `pouchcomment` (
      *   `idPouchComment` int(11) NOT NULL AUTO_INCREMENT COMMENT '픽 댓글 항번',
@@ -19,4 +53,5 @@ public class PouchComment
      *   CONSTRAINT `FK_Register_TO_PouchComment` FOREIGN KEY (`idRegister`) REFERENCES `register` (`idRegister`)
      * ) ENGINE=InnoDB AUTO_INCREMENT=33483 DEFAULT CHARSET=utf8 COMMENT='픽 댓글';
      */
+
 }

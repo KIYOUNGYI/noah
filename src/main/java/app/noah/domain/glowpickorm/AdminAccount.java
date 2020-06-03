@@ -1,15 +1,18 @@
-package app.noah.domain;
+package app.noah.domain.glowpickorm;
 
+import app.noah.domain.Pouch;
 import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+
+import static javax.persistence.FetchType.*;
 
 @Entity
 @Table(name = "adminAccount", catalog = "user_glowmee", schema = "user_glowmee")
-@Data
+@Getter @Setter @RequiredArgsConstructor
 public class AdminAccount {
 
     @Id
@@ -50,4 +53,9 @@ public class AdminAccount {
     private Double yearOff;      //double DEFAULT '0' COMMENT '연차',
     private Double giveYearOff;      //double DEFAULT '0' COMMENT '추가연차',
 
+    /**
+     * 아래부터 추가
+     */
+    @OneToOne(mappedBy = "adminAccount")
+    private Pouch pouch;
 }
