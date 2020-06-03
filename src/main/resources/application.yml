@@ -6,9 +6,6 @@ spring:
       enabled: always
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://_dev-db.glowpick.net:3306/user_glowmee?autoReconnect=true&characterEncoding=utf8&useUnicode=true&useSSL=false
-    username: glowpick
-    password: djWotjtlfgodehla?
 #    hikari:
 #      connection-timeout: 20000
 #        minimum-idle: 5
@@ -18,11 +15,11 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: none # 건들지 마세용
+      ddl-auto: none # 건들지 마세용 개발 인생 끝장납니다
       naming:
         implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-    generate-ddl: false # 건들지 마세용
+    generate-ddl: false # 건들지 마세용 개발 인생 끝장납니다
     show-sql: false
     database: mysql
     database-platform: app.noah.config.MySQLDialectCustom
