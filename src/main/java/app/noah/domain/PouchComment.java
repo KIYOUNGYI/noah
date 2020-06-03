@@ -1,4 +1,7 @@
+//v
 package app.noah.domain;
+
+import app.noah.domain.glowpickorm.Register;
 
 import javax.persistence.*;
 
@@ -14,15 +17,16 @@ public class PouchComment
     private Long id;
 
     /**
-     * 일대다 관계
-     */
-//    @OneToMany(mappedBy = "")
-//    private Long idRegister;
-    /**
      * 다대일 관계
+     * [1] PouchComment 와 Pouch 는 다대일 관계
+     * [2] PouchComment 와 Register 는 다대일 관계
+     *
      */
     @ManyToOne(fetch= LAZY) @JoinColumn(name="idPouch")
     private Pouch pouch;
+
+    @ManyToOne(fetch = LAZY) @JoinColumn(name="idRegister")
+    private Register register;
 
     private String pouchComment;
 

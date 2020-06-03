@@ -1,5 +1,8 @@
+//v
 package app.noah.domain;
 
+import app.noah.domain.glowpickorm.Product;
+import app.noah.domain.glowpickorm.Register;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,22 +13,34 @@ import javax.persistence.*;
 import static javax.persistence.FetchType.*;
 
 @Entity
+@Table(name = "pouchproductmapping", catalog = "user_glowmee", schema = "user_glowmee")
 @Getter @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PouchProductMapping
 {
+    /**
+     * 다대일 관계
+     * [1] pouchproductmapping 과 pouch 는 다대일 관계
+     * [2] pouchproductmapping 과 product 는 다대일 관계
+     * [3] pouchproductmapping 과 register 는 다대일 관계
+     *
+     * 일대다 관계
+     *
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="idPouchProduct")
     private Long id;
 
     //TODO
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name="idPouch")
+    @ManyToOne(fetch = LAZY) @JoinColumn(name="idPouch")
     private Pouch pouch;
-    private Long idProduct;
-    private Long idRegister;
-    private Long adminIdRegister;
+
+    @ManyToOne(fetch = LAZY) @JoinColumn(name="idProduct")
+    private Product pouchProduct;
+
+    @ManyToOne(fetch = LAZY) @JoinColumn(name="idRegister")
+    private Register register;
     //TODO End
 
     private String requestText;
@@ -41,7 +56,7 @@ public class PouchProductMapping
     private String fileDir;
     private Long fileSize;
     private String fileType;
-
+    private Long adminIdRegister;
     /**
      * CREATE TABLE `pouchproductmapping` (
      *   `idPouchProduct` int(11) NOT NULL AUTO_INCREMENT COMMENT '맵핑항번',

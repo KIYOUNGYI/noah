@@ -10,6 +10,8 @@ import java.util.List;
 import javax.persistence.*;
 
 import app.noah.domain.PouchComment;
+import app.noah.domain.PouchProductMapping;
+import app.noah.domain.WishUserPouchMapping;
 import lombok.Data;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Field;
@@ -173,4 +175,12 @@ public class Register implements Serializable {
 //	@OneToMany(mappedBy = "register")
 //	private List<ReviewForFilter> reviewForFilters;
 
+    @OneToMany(mappedBy = "register")
+    private List<PouchProductMapping> pouchProductMappingList = new ArrayList<>();
+
+    @OneToMany(mappedBy="register")
+    private List<PouchComment> pouchCommentList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "register")
+    private List<WishUserPouchMapping> wishUserPouchMappingList = new ArrayList<>();
 }

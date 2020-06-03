@@ -1,13 +1,12 @@
 package app.noah.domain.glowpickorm;
 
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+
 import lombok.Data;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "brand", catalog = "user_glowmee", schema = "user_glowmee")
@@ -55,5 +54,6 @@ public class Brand {
     private Long insertIdRegister;
     private Long updateIdRegister;
 
-
+    @OneToMany(mappedBy = "brand")
+    private List<Product> productList = new ArrayList<>();
 }

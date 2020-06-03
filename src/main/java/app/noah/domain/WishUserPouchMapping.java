@@ -1,3 +1,4 @@
+//v
 package app.noah.domain;
 
 import app.noah.domain.glowpickorm.Register;
@@ -14,19 +15,24 @@ import static javax.persistence.FetchType.*;
 @Getter @Setter @NoArgsConstructor
 public class WishUserPouchMapping
 {
+    /**
+     * 다대일 관계
+     * [1] WishUserPouchMapping 과 pouch 는 다대일 관계
+     * [2] WishUserPouchMapping 과 register 는 다대일 관계
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    //Todo
-//    private Register register;
-    private Long register;
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name="idPouch")
+    private Pouch pouch;
+
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name="idRegister")
+    private Register register;
 
     @Column(name="create_date")
     private String createDate;
 
-
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name="idPouch")
-    private Pouch pouch;
 }

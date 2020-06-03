@@ -1,3 +1,4 @@
+//v
 package app.noah.domain;
 
 import lombok.Getter;
@@ -14,7 +15,7 @@ import java.util.List;
 public class PouchCategory
 {
     /**
-     *  Pouch 와 1 대 다 관계
+     *  [1] PouchCategory 는 Pouch 와 일대다 관계
      */
 
     /**
@@ -32,6 +33,9 @@ public class PouchCategory
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="idPouchCategory")
     private Long id;
+    @OneToMany(mappedBy = "pouchCategory")//read 전용
+    private List<Pouch> pouches = new ArrayList<>();
+
     private String pouchCategoryText;
     private Long sortKey;
     private boolean isDisplay;
@@ -39,8 +43,5 @@ public class PouchCategory
     private String createDate;
     @Column(name="modified_date")
     private String modifiedDate;
-
-    @OneToMany(mappedBy = "pouchCategory")//read 전용
-    private List<Pouch> pouches = new ArrayList<>();
 
 }

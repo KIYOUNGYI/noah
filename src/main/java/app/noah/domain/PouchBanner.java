@@ -1,3 +1,4 @@
+//v
 package app.noah.domain;
 
 import lombok.AccessLevel;
@@ -16,6 +17,9 @@ import static lombok.AccessLevel.*;
 @NoArgsConstructor(access = PROTECTED)
 public class PouchBanner
 {
+    /**
+     * pouchbanner는 pouch 와 다대일 관계
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="idPouchBanner")
