@@ -1,7 +1,8 @@
 package app.noah.adminapi;
 
 import app.noah.domain.Pouch;
-import app.noah.repository.PouchRepository;
+import app.noah.repository.Pouch.PouchRepository;
+import app.noah.repository.Pouch.PouchRepository_Old;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +16,7 @@ import static java.util.stream.Collectors.toList;
 @RequiredArgsConstructor
 public class PouchSimpleApiController
 {
-    private final PouchRepository pouchRepository;
+    private final PouchRepository_Old pouchRepository;
 
     /**
      * 구현은 간단하나 좋은 성능은 아님,
@@ -55,16 +56,6 @@ public class PouchSimpleApiController
         return result;
     }
 
-
-
-
-//    @GetMapping("/api/v2/simple-pouch2")
-//    public List<SimplePouchDto> d2()
-//    {
-//        List<Pouch> all = pouchRepository.findAll();
-//        System.out.println(">>>> size:" + all.size());
-//        return null;
-//    }
 
     @Data
     static class SimplePouchDto

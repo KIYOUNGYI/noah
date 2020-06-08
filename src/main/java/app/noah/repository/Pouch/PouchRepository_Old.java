@@ -1,4 +1,4 @@
-package app.noah.repository;
+package app.noah.repository.Pouch;
 
 import app.noah.domain.Pouch;
 import app.noah.domain.PouchCategory;
@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-public class PouchRepository
+public class PouchRepository_Old
 {
     private final EntityManager em;
 
@@ -39,7 +39,6 @@ public class PouchRepository
                                         + " join fetch p.adminAccount a"
                                       , Pouch.class
         ).getResultList();
-
     }
 
     public List<Pouch> findAllUsingFetchJoin(int offset, int limit)

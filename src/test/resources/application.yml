@@ -1,0 +1,40 @@
+spring:
+  profiles:
+    active: local
+  output:
+    ansi:
+      enabled: always
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  #    hikari:
+  #      connection-timeout: 20000
+  #        minimum-idle: 5
+  #        maximum-pool-size: 12
+  #        idle-timeout: 3000000
+  #        max-lifetime: 1200000
+
+  jpa:
+    hibernate:
+      ddl-auto: none # 건들지 마세용 개발 인생 끝장납니다
+      naming:
+        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    generate-ddl: false # 건들지 마세용 개발 인생 끝장납니다
+    show-sql: false
+    database: mysql
+    database-platform: app.noah.config.MySQLDialectCustom
+    properties:
+      hibernate:
+        format_sql: true
+        enable_lazy_load_no_trans: true
+        default_batch_fetch_size: 1000 # fetch join 최적화
+#        search:
+#          default:
+#            directory_provider: filesystem
+#            indexBase: lucene/indexes/
+#          lucene_version: LUCENE_CURRENT
+#          indexing_strategy: event
+
+logging:
+  level:
+    org.hibernate.SQL: debug
