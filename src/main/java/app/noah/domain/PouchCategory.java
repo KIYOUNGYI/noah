@@ -32,7 +32,8 @@ public class PouchCategory
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="idPouchCategory")
-    private Long id;
+    private Long idPouchCategory;
+
     @OneToMany(mappedBy = "pouchCategory")//read 전용
     private List<Pouch> pouches = new ArrayList<>();
 
