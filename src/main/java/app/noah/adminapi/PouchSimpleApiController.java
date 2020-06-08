@@ -1,14 +1,18 @@
 package app.noah.adminapi;
 
 import app.noah.domain.Pouch;
+import app.noah.dto.PouchSearchCondition;
+import app.noah.handler.ResultHandler;
 import app.noah.repository.Pouch.PouchRepository;
 import app.noah.repository.Pouch.PouchRepository_Old;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
+import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
 
@@ -16,7 +20,17 @@ import static java.util.stream.Collectors.toList;
 @RequiredArgsConstructor
 public class PouchSimpleApiController
 {
-    private final PouchRepository_Old pouchRepository;
+    private final PouchRepository_Old pouchOldRepository;
+
+    private final PouchRepository pouchRepository;
+
+    @GetMapping("/api/v2/pouch")
+    public ResponseEntity<?> getPouchList(PouchSearchCondition condition)
+    {
+        System.out.println("condition:"+condition.toString());
+        Map<String,Object> result = pouchRepository.searchPageSimple(condition);
+        return new ResultHandler().handle(result);
+    }
 
     /**
      * 구현은 간단하나 좋은 성능은 아님,
@@ -26,7 +40,7 @@ public class PouchSimpleApiController
     @GetMapping("/api/v2/simple-pouch")
     public List<SimplePouchDto> d()
     {
-        List<Pouch> pouches = pouchRepository.findAll();
+        List<Pouch> pouches = pouchOldRepository.findAll();
         List<SimplePouchDto> result = pouches.stream().map(p->new SimplePouchDto(p)).collect(toList());
         return result;
     }
@@ -39,7 +53,7 @@ public class PouchSimpleApiController
     @GetMapping("/api/v3/simple-pouch")
     public List<SimplePouchDto> d3()
     {
-        List<Pouch> pouches = pouchRepository.findAllUsingFetchJoin();
+        List<Pouch> pouches = pouchOldRepository.findAllUsingFetchJoin();
         List<SimplePouchDto> result = pouches.stream().map(p->new SimplePouchDto(p)).collect(toList());
         return result;
     }
@@ -51,7 +65,7 @@ public class PouchSimpleApiController
                     @RequestParam(value="limit",defaultValue = "20") int limit
             )
     {
-        List<Pouch> pouches = pouchRepository.findAllUsingFetchJoin(offset,limit);
+        List<Pouch> pouches = pouchOldRepository.findAllUsingFetchJoin(offset,limit);
         List<SimplePouchDto> result = pouches.stream().map(p->new SimplePouchDto(p)).collect(toList());
         return result;
     }
