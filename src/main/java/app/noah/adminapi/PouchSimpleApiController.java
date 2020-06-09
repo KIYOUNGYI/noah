@@ -1,105 +1,49 @@
 package app.noah.adminapi;
 
 import app.noah.domain.Pouch;
+import app.noah.dto.PouchDto;
 import app.noah.dto.PouchSearchCondition;
 import app.noah.handler.ResultHandler;
 import app.noah.repository.Pouch.PouchRepository;
 import app.noah.repository.Pouch.PouchRepository_Old;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
 
+@Api(value="캐스트 API", tags="PouchSimpleApiController")
 @RestController
 @RequiredArgsConstructor
 public class PouchSimpleApiController
 {
-    private final PouchRepository_Old pouchOldRepository;
-
     private final PouchRepository pouchRepository;
 
+    @ApiOperation(value="캐스트 목록 검색", response = PouchDto.class)
     @GetMapping("/api/v2/pouch")
     public ResponseEntity<?> getPouchList(PouchSearchCondition condition)
     {
-        System.out.println("condition:"+condition.toString());
+        if(condition.getOffset()==null) condition.setOffset(0l);
+        if(condition.getLimit()==null) condition.setLimit(10l);
+        System.out.println(">> condition:"+condition.toString());
         Map<String,Object> result = pouchRepository.searchPageSimple(condition);
         return new ResultHandler().handle(result);
     }
 
-    /**
-     * 구현은 간단하나 좋은 성능은 아님,
-     * 1+10
-     * @return
-     */
-    @GetMapping("/api/v2/simple-pouch")
-    public List<SimplePouchDto> d()
+    @ApiOperation(value="캐스트 상세", response = Object.class)
+    @GetMapping("/api/v2/pouch/{id}")
+    public ResponseEntity<?> updateCast(@PathVariable Long id)
     {
-        List<Pouch> pouches = pouchOldRepository.findAll();
-        List<SimplePouchDto> result = pouches.stream().map(p->new SimplePouchDto(p)).collect(toList());
-        return result;
+        Map<String,Object> result = pouchRepository.getPouchDetail(id);
+        return new ResultHandler().handle(result);
     }
 
-    /**
-     * TOOne 관계는 모두 페치조인한다.
-     * (진행중)
-     * @return
-     */
-    @GetMapping("/api/v3/simple-pouch")
-    public List<SimplePouchDto> d3()
-    {
-        List<Pouch> pouches = pouchOldRepository.findAllUsingFetchJoin();
-        List<SimplePouchDto> result = pouches.stream().map(p->new SimplePouchDto(p)).collect(toList());
-        return result;
-    }
+    
 
-    @GetMapping("/api/v3.1/simple-pouch")
-    public List<SimplePouchDto> d3
-            (
-                    @RequestParam(value="offset",defaultValue = "0") int offset,
-                    @RequestParam(value="limit",defaultValue = "20") int limit
-            )
-    {
-        List<Pouch> pouches = pouchOldRepository.findAllUsingFetchJoin(offset,limit);
-        List<SimplePouchDto> result = pouches.stream().map(p->new SimplePouchDto(p)).collect(toList());
-        return result;
-    }
-
-
-    @Data
-    static class SimplePouchDto
-    {
-        private Long id;
-        private String categoryName;
-//        private Long categoryId;
-//        private String imgUrl;
-        private String pouchTitle;
-        private String createDate;
-        private Integer productCount;
-        private Long visitCount;
-        private boolean editorPick;
-//        private String register;
-        private Long recommendCount;
-        private Integer commentCount;
-
-        public SimplePouchDto(Pouch pouch)
-        {
-            this.id = pouch.getId();
-            this.categoryName = pouch.getPouchCategory().getPouchCategoryText();
-//            this.categoryId = pouch.getPouchCategory().getIdPouchCategory();
-//            this.imgUrl = pouch
-            this.pouchTitle = pouch.getPouchTitle();
-            this.createDate = pouch.getCreateDate();
-            this.productCount = pouch.getPouchProductMappingsList().size();
-            this.visitCount = pouch.getReadCount();
-            this.editorPick = pouch.isEditerPick();
-            this.recommendCount = pouch.getRecommendCount();
-            this.commentCount = pouch.getPouchCommentList().size();
-        }
-    }
 }

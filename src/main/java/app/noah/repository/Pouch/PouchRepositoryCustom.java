@@ -10,5 +10,6 @@ public interface PouchRepositoryCustom
 {
     List<PouchDto> search(PouchSearchCondition condition);
     Map<String,Object> searchPageSimple(PouchSearchCondition condition);
-    Map<String,Object>searchPageComplex(PouchSearchCondition condition);
+    Map<String,Object> searchPageComplex(PouchSearchCondition condition);
+    Map<String,Object> getPouchDetail(Long idPouch);
 }

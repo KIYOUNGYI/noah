@@ -204,4 +204,11 @@ public class PouchRepositoryTest
         // 개수가 10개가 맞는지
         assertThat(dummy).size().isEqualTo(10);
     }
+
+    @Test
+    public void searchPouchDetail()
+    {
+        Map<String, Object> pouchDetail = pouchRepository.getPouchDetail(1031l);
+        System.out.println("pouchDetail:"+pouchDetail.toString());
+    }
 }

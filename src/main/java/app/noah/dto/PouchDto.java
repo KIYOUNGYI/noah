@@ -22,13 +22,35 @@ public class PouchDto
     private Long likeCnt;//추천 개수
     private Integer commentCnt;
 
+    private String fileOrgName;
+    private Integer fileSize;
+    private String fileSaveName;
+    private String fileDir;
+    private String fileType;
+
+//    @QueryProjection
+//    public PouchDto(Long id,String category,String pouchName, String createDate,String startDate,Integer productCnt,
+//                    Long readCnt,Boolean isEditorPick,Long adminAccount,String adminNickName,Long likeCnt,Integer commentCnt
+//                    )
+//    {
+//        this.id = id;
+//        this.category =category;
+//        this.pouchName = pouchName;
+//        this.createDate = createDate;
+//        this.startDate = startDate;
+//        this.productCnt = productCnt;
+//        this.readCnt = readCnt;
+//        this.isEditorPick = isEditorPick;
+//        this.adminAccount = adminAccount;
+//        this.adminNickName = adminNickName;
+//        this.likeCnt = likeCnt;
+//        this.commentCnt = commentCnt;
+//    }
+
     @QueryProjection
-    public PouchDto(Long id,String category,String pouchName, String createDate,String startDate,Integer productCnt,
-                    Long readCnt,Boolean isEditorPick,Long adminAccount,String adminNickName,Long likeCnt,Integer commentCnt
-                    )
-    {
+    public PouchDto(Long id, String category, String pouchName, String createDate, String startDate, Integer productCnt, Long readCnt, Boolean isEditorPick, Long adminAccount, String adminNickName, Long likeCnt, Integer commentCnt, String fileOrgName, Integer fileSize, String fileSaveName, String fileDir, String fileType) {
         this.id = id;
-        this.category =category;
+        this.category = category;
         this.pouchName = pouchName;
         this.createDate = createDate;
         this.startDate = startDate;
@@ -39,6 +61,10 @@ public class PouchDto
         this.adminNickName = adminNickName;
         this.likeCnt = likeCnt;
         this.commentCnt = commentCnt;
+        this.fileOrgName = fileOrgName;
+        this.fileSize = fileSize;
+        this.fileSaveName = fileSaveName;
+        this.fileDir = fileDir;
+        this.fileType = fileType;
     }
-
 }

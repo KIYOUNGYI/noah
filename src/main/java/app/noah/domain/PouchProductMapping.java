@@ -56,7 +56,7 @@ public class PouchProductMapping
     private String fileOrgName;
     private String fileSaveName;
     private String fileDir;
-    private Long fileSize;
+    private Integer fileSize;
     private String fileType;
     private Long adminIdRegister;
     /**
