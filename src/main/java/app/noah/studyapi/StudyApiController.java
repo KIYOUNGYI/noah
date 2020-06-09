@@ -1,7 +1,7 @@
 package app.noah.studyapi;
 
 import app.noah.domain.Pouch;
-import app.noah.repository.Pouch.PouchRepository_Old;
+import app.noah.repository.pouch.PouchRepository_Old;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;

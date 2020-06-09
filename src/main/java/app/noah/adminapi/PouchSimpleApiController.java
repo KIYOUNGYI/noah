@@ -1,22 +1,16 @@
 package app.noah.adminapi;
 
-import app.noah.domain.Pouch;
 import app.noah.dto.PouchDto;
 import app.noah.dto.PouchSearchCondition;
 import app.noah.handler.ResultHandler;
-import app.noah.repository.Pouch.PouchRepository;
-import app.noah.repository.Pouch.PouchRepository_Old;
+import app.noah.repository.pouch.PouchRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
-
-import static java.util.stream.Collectors.toList;
 
 @Api(value="캐스트 API", tags="PouchSimpleApiController")
 @RestController
@@ -44,6 +38,6 @@ public class PouchSimpleApiController
         return new ResultHandler().handle(result);
     }
 
-    
+
 
 }

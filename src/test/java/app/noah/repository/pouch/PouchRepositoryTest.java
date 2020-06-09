@@ -2,12 +2,9 @@ package app.noah.repository.pouch;
 
 import app.noah.dto.PouchDto;
 import app.noah.dto.PouchSearchCondition;
-import app.noah.repository.Pouch.PouchRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;

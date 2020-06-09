@@ -1,8 +1,5 @@
-package app.noah.repository.Pouch;
+package app.noah.repository.pouch;
 
-import app.noah.domain.Pouch;
-import app.noah.domain.PouchProductMapping;
-import app.noah.domain.QPouchProductMapping;
 import app.noah.dto.*;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.OrderSpecifier;

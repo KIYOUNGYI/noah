@@ -1,4 +1,4 @@
-package app.noah.repository.Pouch;
+package app.noah.repository.pouch;
 
 import app.noah.dto.PouchDto;
 import app.noah.dto.PouchSearchCondition;

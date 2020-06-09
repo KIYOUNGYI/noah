@@ -1,7 +1,6 @@
-package app.noah.repository.Pouch;
+package app.noah.repository.pouch;
 
 import app.noah.domain.Pouch;
-import app.noah.domain.PouchCategory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
