@@ -1,4 +1,4 @@
-package app.noah.repository.Pouch;
+package app.noah.repository.pouch;
 
 import app.noah.domain.Pouch;
 import org.springframework.data.jpa.repository.JpaRepository;

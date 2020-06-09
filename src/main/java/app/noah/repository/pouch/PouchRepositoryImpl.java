@@ -1,8 +1,6 @@
-package app.noah.repository.Pouch;
+package app.noah.repository.pouch;
 
-import app.noah.dto.PouchDto;
-import app.noah.dto.PouchSearchCondition;
-import app.noah.dto.QPouchDto;
+import app.noah.dto.*;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -12,6 +10,7 @@ import org.springframework.util.StringUtils;
 import javax.persistence.EntityManager;
 import java.util.*;
 
+import static app.noah.domain.QPouchProductMapping.pouchProductMapping;
 import static app.noah.domain.QPouch.pouch;
 import static app.noah.func.ResultFunc.*;
 
@@ -29,6 +28,7 @@ public class PouchRepositoryImpl implements PouchRepositoryCustom{
         List<PouchDto> result = queryFactory.select(new QPouchDto(
                 pouch.id,
                 pouch.pouchCategory.pouchCategoryText.as("category"),
+                pouch.isDisplay,
                 pouch.pouchTitle,
                 pouch.createDate,
                 pouch.startDate,
@@ -38,7 +38,8 @@ public class PouchRepositoryImpl implements PouchRepositoryCustom{
                 pouch.adminAccount.idRegister,
                 pouch.adminAccount.nickName,
                 pouch.recommendCount,
-                pouch.pouchCommentList.size()
+                pouch.pouchCommentList.size(),
+                pouch.fileOrgName,pouch.fileSize,pouch.fileSaveName, pouch.fileDir,pouch.fileType
         )).from(pouch).where().fetch();
 
         return result;
@@ -58,27 +59,26 @@ public class PouchRepositoryImpl implements PouchRepositoryCustom{
     @Override
     public Map<String, Object> searchPageSimple(PouchSearchCondition condition)
     {
+
         OrderSpecifier[] orderSpecifiersArr = orderByClause(condition.getSort());
         QueryResults<PouchDto> contents = queryFactory.select(new QPouchDto(
-                pouch.id,
-                pouch.pouchCategory.pouchCategoryText.as("category"),
-                pouch.pouchTitle,
-                pouch.createDate,
-                pouch.startDate,
-                pouch.pouchProductMappingsList.size(),
-                pouch.readCount,
-                pouch.editerPick,
-                pouch.adminAccount.idRegister,
-                pouch.adminAccount.nickName,
-                pouch.recommendCount,
-                pouch.pouchCommentList.size()
+                pouch.id, pouch.pouchCategory.pouchCategoryText.as("category"), pouch.isDisplay,
+                pouch.pouchTitle, pouch.createDate, pouch.startDate,
+                pouch.pouchProductMappingsList.size(), pouch.hitsCount,
+                pouch.editerPick, pouch.adminAccount.idRegister, pouch.adminAccount.nickName,
+                pouch.recommendCount, pouch.pouchCommentList.size(),
+                pouch.fileOrgName,pouch.fileSize,pouch.fileSaveName, pouch.fileDir,pouch.fileType
         )).from(pouch).
-                where(pouchTitleContains(condition.getTitle()),pouchContentContains(condition.getContent()))
+                where(
+                        pouchTitleContains(condition.getTitle()),
+                        pouchContentContains(condition.getContent()),
+                        pouchPeriodStart(condition.getStartDate()),
+                        pouchPeriodEnd(condition.getEndDate())
+                )
                 .orderBy(orderSpecifiersArr)
                 .offset(condition.getOffset())
                 .limit(condition.getLimit())
                 .fetchResults();
-
         return getResult(contents,true);
 
 
@@ -87,6 +87,49 @@ public class PouchRepositoryImpl implements PouchRepositoryCustom{
     @Override
     public Map<String, Object> searchPageComplex(PouchSearchCondition condition) {
         return null;
+    }
+
+    @Override
+    public Map<String, Object> getPouchDetail(Long idPouch)
+    {
+
+        Map<String, Object> result = new HashMap<>();
+
+        PouchDto pouchDto = queryFactory.select(new QPouchDto(
+                pouch.id, pouch.pouchCategory.pouchCategoryText.as("category"),pouch.isDisplay,
+                pouch.pouchTitle, pouch.createDate, pouch.startDate,
+                pouch.pouchProductMappingsList.size(), pouch.hitsCount,
+                pouch.editerPick, pouch.adminAccount.idRegister, pouch.adminAccount.nickName,
+                pouch.recommendCount, pouch.pouchCommentList.size(),
+                pouch.fileOrgName,pouch.fileSize,pouch.fileSaveName, pouch.fileDir,pouch.fileType
+        )).from(pouch).
+                where(pouch.id.eq(idPouch)).fetchFirst();
+        result.put("data",pouchDto);
+
+        List<PouchProductDto> products = queryFactory.select(
+                new QPouchProductDto(
+                        pouchProductMapping.pouchProduct.idProduct, pouchProductMapping.pouchProduct.productTitle,
+                        pouchProductMapping.pouchProduct.fileOrgName, pouchProductMapping.pouchProduct.fileSaveName,
+                        pouchProductMapping.pouchProduct.fileDir, pouchProductMapping.pouchProduct.fileSize,
+                        pouchProductMapping.pouchProduct.fileType
+                ))
+                .from(pouchProductMapping)
+                .where(pouchProductMapping.pouch.id.eq(idPouch)).fetch();
+
+
+        result.put("products:",products);
+
+        return result;
+    }
+
+
+    private BooleanExpression pouchPeriodStart(String startDate)
+    {
+        return StringUtils.isEmpty(startDate)? null : pouch.createDate.gt(startDate);
+    }
+    private BooleanExpression pouchPeriodEnd(String endDate)
+    {
+        return StringUtils.isEmpty(endDate)? null : pouch.createDate.lt(endDate);
     }
 
     /**
@@ -109,10 +152,6 @@ public class PouchRepositoryImpl implements PouchRepositoryCustom{
         return StringUtils.isEmpty(content) ? null:pouch.pouchText.contains(content);
     }
 
-    private BooleanExpression periodContains(String startDate, String endDate)
-    {
-        return null;
-    }
 
     private OrderSpecifier[] orderByClause(Integer id)
     {
@@ -175,7 +214,11 @@ public class PouchRepositoryImpl implements PouchRepositoryCustom{
 
             int len = orderBy.size();
 
-            if(len==0){throw new Exception();}
+            if(len==0)
+            {
+//                throw new Exception();
+                orderBy.add(pouch.orderNum.desc());
+            }
 
             OrderSpecifier[] orders = new OrderSpecifier[len];
             for (int i = 0; i < len; i++)
@@ -186,7 +229,7 @@ public class PouchRepositoryImpl implements PouchRepositoryCustom{
         }
         catch (Exception e)// worst case 예외처리
         {
-            System.out.println("error : "+ e);
+            System.out.println("orderByClause error : "+ e);
             OrderSpecifier[] orders = new OrderSpecifier[1];
             orders[0] = pouch.createDate.desc();
             return orders;

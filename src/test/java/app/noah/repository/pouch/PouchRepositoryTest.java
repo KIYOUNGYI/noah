@@ -2,12 +2,9 @@ package app.noah.repository.pouch;
 
 import app.noah.dto.PouchDto;
 import app.noah.dto.PouchSearchCondition;
-import app.noah.repository.Pouch.PouchRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -203,5 +200,12 @@ public class PouchRepositoryTest
         assertThat(dummy).extracting("id").contains(1027l,1026l,1024l,1018l,1012l);
         // 개수가 10개가 맞는지
         assertThat(dummy).size().isEqualTo(10);
+    }
+
+    @Test
+    public void searchPouchDetail()
+    {
+        Map<String, Object> pouchDetail = pouchRepository.getPouchDetail(1031l);
+        System.out.println("pouchDetail:"+pouchDetail.toString());
     }
 }

@@ -1,6 +1,6 @@
 package app.noah.service;
 
-import app.noah.repository.Pouch.PouchRepository;
+import app.noah.repository.pouch.PouchRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
