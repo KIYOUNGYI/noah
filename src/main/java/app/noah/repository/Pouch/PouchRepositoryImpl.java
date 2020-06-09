@@ -31,6 +31,7 @@ public class PouchRepositoryImpl implements PouchRepositoryCustom{
         List<PouchDto> result = queryFactory.select(new QPouchDto(
                 pouch.id,
                 pouch.pouchCategory.pouchCategoryText.as("category"),
+                pouch.isDisplay,
                 pouch.pouchTitle,
                 pouch.createDate,
                 pouch.startDate,
@@ -64,7 +65,7 @@ public class PouchRepositoryImpl implements PouchRepositoryCustom{
 
         OrderSpecifier[] orderSpecifiersArr = orderByClause(condition.getSort());
         QueryResults<PouchDto> contents = queryFactory.select(new QPouchDto(
-                pouch.id, pouch.pouchCategory.pouchCategoryText.as("category"),
+                pouch.id, pouch.pouchCategory.pouchCategoryText.as("category"), pouch.isDisplay,
                 pouch.pouchTitle, pouch.createDate, pouch.startDate,
                 pouch.pouchProductMappingsList.size(), pouch.hitsCount,
                 pouch.editerPick, pouch.adminAccount.idRegister, pouch.adminAccount.nickName,
@@ -98,7 +99,7 @@ public class PouchRepositoryImpl implements PouchRepositoryCustom{
         Map<String, Object> result = new HashMap<>();
 
         PouchDto pouchDto = queryFactory.select(new QPouchDto(
-                pouch.id, pouch.pouchCategory.pouchCategoryText.as("category"),
+                pouch.id, pouch.pouchCategory.pouchCategoryText.as("category"),pouch.isDisplay,
                 pouch.pouchTitle, pouch.createDate, pouch.startDate,
                 pouch.pouchProductMappingsList.size(), pouch.hitsCount,
                 pouch.editerPick, pouch.adminAccount.idRegister, pouch.adminAccount.nickName,

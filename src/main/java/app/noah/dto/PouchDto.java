@@ -11,6 +11,7 @@ public class PouchDto
 {
     private Long id;
     private String category;
+    private Boolean isDisplay;
     private String pouchName;
     private String createDate;
     private String startDate;
@@ -48,9 +49,10 @@ public class PouchDto
 //    }
 
     @QueryProjection
-    public PouchDto(Long id, String category, String pouchName, String createDate, String startDate, Integer productCnt, Long readCnt, Boolean isEditorPick, Long adminAccount, String adminNickName, Long likeCnt, Integer commentCnt, String fileOrgName, Integer fileSize, String fileSaveName, String fileDir, String fileType) {
+    public PouchDto(Long id, String category,Boolean isDisplay, String pouchName, String createDate, String startDate, Integer productCnt, Long readCnt, Boolean isEditorPick, Long adminAccount, String adminNickName, Long likeCnt, Integer commentCnt, String fileOrgName, Integer fileSize, String fileSaveName, String fileDir, String fileType) {
         this.id = id;
         this.category = category;
+        this.isDisplay = isDisplay;
         this.pouchName = pouchName;
         this.createDate = createDate;
         this.startDate = startDate;
