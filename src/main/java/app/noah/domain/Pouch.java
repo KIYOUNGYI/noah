@@ -3,8 +3,11 @@ package app.noah.domain;
 
 import app.noah.domain.glowpickorm.AdminAccount;
 import app.noah.domain.glowpickorm.Brand;
+import app.noah.dto.ImageContentDto;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 
@@ -16,6 +19,7 @@ import static javax.persistence.FetchType.LAZY;
 @Entity
 @Table(name="pouch",catalog = "user_glowmee", schema = "user_glowmee")
 @Getter @Setter
+@ToString(of={"id","pouchTitle"})
 public class Pouch
 {
     /**
@@ -66,9 +70,9 @@ public class Pouch
 
     private String pouchTitle;
     private String pouchText;
-    private Long readCount;
-    private Long pouchScore;
-    private Long recommendCount;
+    private Long readCount=0l;
+    private Long pouchScore=0l;
+    private Long recommendCount=0l;
     private boolean isDisplay;
     private boolean todayPouch;
     private boolean editerPick;
@@ -87,10 +91,27 @@ public class Pouch
     private String fileDir;
     private Integer fileSize;
     private String fileType;
-    private int orderNum;
+    private Integer orderNum;
 
     @Column(name="hits_count")
-    private Long hitsCount;
+    private Long hitsCount=0l;
+
+    public Pouch(AdminAccount adminAccount, Boolean isDisplay, PouchCategory pouchCategory, String title, String content, ImageContentDto imageContentDto, String createDate, String startDate)
+    {
+        this.isDisplay = isDisplay;
+        this.pouchCategory = pouchCategory;
+        this.pouchTitle =title;
+        this.pouchText = content;
+        this.adminAccount = adminAccount;
+        this.fileOrgName = imageContentDto.getOriginalFileName();
+        this.fileSaveName = imageContentDto.getUploadFileName();
+        this.fileSize = imageContentDto.getFileSize();
+        this.fileDir = imageContentDto.getFileType();
+        this.fileType = imageContentDto.getFileType();
+        this.createDate = createDate;
+        this.startDate = startDate;
+    }
+
 
 }
 

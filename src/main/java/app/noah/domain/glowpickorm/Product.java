@@ -4,6 +4,7 @@ import javax.persistence.*;
 
 import app.noah.domain.PouchProductMapping;
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
 @Entity
 @Table(name = "product", catalog = "user_glowmee", schema = "user_glowmee")
 @Data
+@ToString(of={"idProduct","productTitle"})
 public class Product {
 
     @Id

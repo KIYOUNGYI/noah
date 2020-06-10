@@ -3,10 +3,7 @@ package app.noah.domain;
 
 import app.noah.domain.glowpickorm.Product;
 import app.noah.domain.glowpickorm.Register;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -16,6 +13,7 @@ import static javax.persistence.FetchType.*;
 @Table(name = "pouchproductmapping", catalog = "user_glowmee", schema = "user_glowmee")
 @Getter @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString(of={"id"})
 public class PouchProductMapping
 {
     /**
@@ -59,6 +57,14 @@ public class PouchProductMapping
     private Integer fileSize;
     private String fileType;
     private Long adminIdRegister;
+
+    public PouchProductMapping(Pouch pouch,Product product,String createDate)
+    {
+        this.pouch = pouch;
+        this.pouchProduct = product;
+        this.createDate = createDate;
+    }
+
     /**
      * CREATE TABLE `pouchproductmapping` (
      *   `idPouchProduct` int(11) NOT NULL AUTO_INCREMENT COMMENT '맵핑항번',
