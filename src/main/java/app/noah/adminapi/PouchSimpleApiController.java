@@ -1,6 +1,7 @@
 package app.noah.adminapi;
 
 import app.noah.dto.PouchDto;
+import app.noah.dto.PouchRequestDto;
 import app.noah.dto.PouchSearchCondition;
 import app.noah.handler.ResultHandler;
 import app.noah.repository.pouch.PouchRepository;
@@ -32,12 +33,20 @@ public class PouchSimpleApiController
 
     @ApiOperation(value="캐스트 상세", response = Object.class)
     @GetMapping("/api/v2/pouch/{id}")
-    public ResponseEntity<?> updateCast(@PathVariable Long id)
+    public ResponseEntity<?> getPouchDetail(@PathVariable Long id)
     {
         Map<String,Object> result = pouchRepository.getPouchDetail(id);
         return new ResultHandler().handle(result);
     }
 
+    @ApiOperation(value="캐스트 등록 or 수정", response = Object.class)
+    @PostMapping("/api/v2/pouch")
+    public ResponseEntity<?> insertPouch(@RequestBody PouchRequestDto pouchRequestDto)
+    {
+        System.out.println("pouchRequestDto : "+pouchRequestDto.toString());
+        Map<String,Object> result = pouchRepository.insertOrUpdatePouch(pouchRequestDto);
+        return new ResultHandler().handle(result);
+    }
 
 
 }

@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-public class PouchRepositoryTest
+public class PouchRepositorySelectTest
 {
     @Autowired
     PouchRepository pouchRepository;

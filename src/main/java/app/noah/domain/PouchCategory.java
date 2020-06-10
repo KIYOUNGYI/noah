@@ -3,6 +3,7 @@ package app.noah.domain;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @Table(name="pouchcategory", catalog = "user_glowmee", schema="user_glowmee")
+@ToString(of={"idPouchCategory","pouchCategoryText"})
 public class PouchCategory
 {
     /**

@@ -1,10 +1,21 @@
 package app.noah.repository.pouch;
 
+import app.noah.domain.Pouch;
+import app.noah.domain.PouchCategory;
+import app.noah.domain.PouchProductMapping;
+import app.noah.domain.glowpickorm.AdminAccount;
+import app.noah.domain.glowpickorm.Product;
 import app.noah.dto.*;
+import app.noah.repository.AdminAccountRepository;
+import app.noah.repository.pouch.category.PouchCategoryRepository;
+//import app.noah.repository.pouch.pouchproduct.PouchProductRepository;
+import app.noah.repository.pouch.pouchproduct.PouchProductMappingRepository;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
@@ -16,7 +27,14 @@ import static app.noah.func.ResultFunc.*;
 
 public class PouchRepositoryImpl implements PouchRepositoryCustom{
 
+    @Autowired private PouchRepository pouchRepository;
+    @Autowired private PouchCategoryRepository pouchCategoryRepository;
+    @Autowired private AdminAccountRepository adminAccountRepository;
+    @Autowired private ProductRepository productRepository;
+    @Autowired private PouchProductMappingRepository pouchProductMappingRepository;
+
     private final JPAQueryFactory queryFactory;
+
     public PouchRepositoryImpl(EntityManager em)
     {
         this.queryFactory = new JPAQueryFactory(em);
@@ -46,13 +64,12 @@ public class PouchRepositoryImpl implements PouchRepositoryCustom{
     }
 
     /**
-     * 개수->10개,20개,30개,40개,50
-     * 정렬순->최신등록순,이전등록순,전시순,비전시순,카테고리순,카테고리역순,추천많은순,추천적은순,댓글많으눗ㄴ,댓글적은순
+     *
      * 검색조건
      * [1] 제목 like
      * [2] 내용 like
-     * [3] 작성일->시작~끝
-     * [4] 정렬조건 11개
+     * [3] 정렬조건 -> 최신등록순,이전등록순,전시순,비전시순,카테고리순,카테고리역순,추천많은순,추천적은순,댓글많은순,댓글적은순
+     * [4] 개수 ->  10,20,30,40,50 개 + 페이징 처리
      * @param condition
      * @return
      */
@@ -80,8 +97,6 @@ public class PouchRepositoryImpl implements PouchRepositoryCustom{
                 .limit(condition.getLimit())
                 .fetchResults();
         return getResult(contents,true);
-
-
     }
 
     @Override
@@ -123,10 +138,73 @@ public class PouchRepositoryImpl implements PouchRepositoryCustom{
     }
 
 
+    /**
+     * 캐스트 등록 or 업데이트
+     * if idEvent is null:
+     *  'insert'
+     * else:
+     *  'update'
+     * @param pouchRequestDto
+     * @return
+     */
+    @Transactional
+    public Map<String, Object> insertOrUpdatePouch(PouchRequestDto pouchRequestDto)
+    {
+        Map<String, Object> result = new HashMap<>();
+        Pouch pouch = null;
+
+        Long id = pouchRequestDto.getIdPouch();
+        if(id!=null)//update
+        {
+            pouch = pouchRepository.findById(id).get();
+            System.out.println("pouch:"+pouch.toString());
+
+        }
+        else//insert
+        {
+            ImageContentDto imageContentDto = new ImageContentDto
+                    (
+                            pouchRequestDto.getImageContentDto().getOriginalFileName(),
+                            pouchRequestDto.getImageContentDto().getFileSize(),
+                            pouchRequestDto.getImageContentDto().getUploadFileName(),
+                            pouchRequestDto.getImageContentDto().getFilePath(),
+                            pouchRequestDto.getImageContentDto().getFileType()
+                    );
+
+            PouchCategory pouchCategory = pouchCategoryRepository.findById(pouchRequestDto.getIdPouchCategory()).get();
+            AdminAccount adminAccount = adminAccountRepository.findById(pouchRequestDto.getIdRegister()).get();
+
+            pouch = new Pouch(
+                    adminAccount,
+                    pouchRequestDto.getIsDisplay(),
+                    pouchCategory,
+                    pouchRequestDto.getTitle(),
+                    pouchRequestDto.getContent(),
+                    imageContentDto,
+                    pouchRequestDto.getOpenDate(),
+                    "YYYYMMDDHHmmss"
+            );
+            pouchRepository.save(pouch);
+
+            List<Long> products = pouchRequestDto.getProducts();
+
+            for(Long productId : products)
+            {
+                Product pd = productRepository.findById(productId).get();
+                PouchProductMapping pmd = new PouchProductMapping(pouch,pd,"created_date");
+                pouchProductMappingRepository.save(pmd);
+            }
+        }
+        result.put("data", pouch);
+        return result;
+    }
+
+
     private BooleanExpression pouchPeriodStart(String startDate)
     {
         return StringUtils.isEmpty(startDate)? null : pouch.createDate.gt(startDate);
     }
+
     private BooleanExpression pouchPeriodEnd(String endDate)
     {
         return StringUtils.isEmpty(endDate)? null : pouch.createDate.lt(endDate);
@@ -236,15 +314,3 @@ public class PouchRepositoryImpl implements PouchRepositoryCustom{
         }
     }
 }
-
-/**
- *     $list = Yii::$app->db->createCommand("SELECT p.idPouch, p.idPouchCategory, pc.pouchCategoryText, p.pouchImg, p.pouchTitle, p.create_date, p.orderNum, p.hits_count, p.idRegister,
- *             (SELECT nickName FROM adminAccount AS ac WHERE ac.idRegister=p.idRegister) AS nickname, "
- *             . "(SELECT COUNT(m.idProduct) FROM pouchproductmapping m WHERE p.idPouch=m.idPouch) productCount, p.editerPick, p.recommendCount, "
- *             . "(SELECT COUNT(*) FROM pouchcomment c WHERE p.idPouch=c.idPouch) commentCount, p.isDisplay, "
- *             . "p.fileOrgName, p.fileSaveName, p.fileDir, p.fileSize, p.fileType "
- *             . "FROM pouch p, adminAccount r, pouchcategory pc "
- *             . "WHERE p.idRegister=r.idRegister AND p.idPouchCategory=pc.idPouchCategory$where "
- *             . "ORDER BY $order "
- *             . "LIMIT $pages->offset, $pages->limit")->queryAll();
- */
