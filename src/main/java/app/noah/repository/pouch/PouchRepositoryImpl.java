@@ -12,6 +12,7 @@ import app.noah.repository.pouch.category.PouchCategoryRepository;
 import app.noah.repository.pouch.pouchproduct.PouchProductMappingRepository;
 import app.noah.utils.LocalDateTimeUtil;
 import com.querydsl.core.QueryResults;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -90,7 +91,8 @@ public class PouchRepositoryImpl implements PouchRepositoryCustom{
                         pouchTitleContains(condition.getTitle()),
                         pouchContentContains(condition.getContent()),
                         pouchPeriodStart(condition.getStartDate()),
-                        pouchPeriodEnd(condition.getEndDate())
+                        pouchPeriodEnd(condition.getEndDate()),
+                        pouch.orderNum.isNotNull()
                 )
                 .orderBy(orderSpecifiersArr)
                 .offset(condition.getOffset())
@@ -157,7 +159,7 @@ public class PouchRepositoryImpl implements PouchRepositoryCustom{
         if(id!=null)//update
         {
             pouch =createPouchObj(pouchRequestDto, id);
-            System.out.println(">>>> update : "+ pouch.toString());
+//            System.out.println(">>>> update : "+ pouch.toString());
             pouchRepository.save(pouch);
             updatePouchProducts(pouchRequestDto,pouch);
         }
@@ -172,10 +174,48 @@ public class PouchRepositoryImpl implements PouchRepositoryCustom{
         return result;
     }
 
+    /**
+     * 등록, 활성, 비활성 개수 반환
+     * @return
+     */
+    @Override
+    public Map<String, Object> getSummary()
+    {
+        HashMap<String,Object> result = new HashMap<>();
+
+        List<Tuple> fetch = queryFactory.select(
+                pouch.count(),//[1] total
+                queryFactory.select(pouch.count()).from(pouch)
+                                                  .where(pouch.isDisplay.eq(true)),//[2] active
+                queryFactory.select(pouch.count())
+                            .from(pouch)
+                            .where(pouch.isDisplay.eq(false))//[3] inactive
+                )
+                .from(pouch).fetch();
+        Tuple tuple = fetch.get(0);
+        Long total = tuple.get(0,Long.class);
+        Long active = tuple.get(1,Long.class);
+        Long inactive = tuple.get(2,Long.class);
+
+        result.put("total",total);
+        result.put("active",active);
+        result.put("inactive",inactive);
+        return result;
+    }
+
+    /**
+     *
+     * @param pouchRequestDto
+     * @param pouch
+     *
+     * 로직요약
+     *
+     */
     private void updatePouchProducts(PouchRequestDto pouchRequestDto, Pouch pouch)
     {
         Long idPouch = pouch.getId();
         List<Long> givenList = pouchRequestDto.getProducts();
+        //[3]
         Map<String, Object> productsByPouchId = pouchProductMappingRepository.findByPouchId(idPouch);
         List<Long> dbList = (List<Long>) productsByPouchId.get("data");
 
@@ -198,8 +238,8 @@ public class PouchRepositoryImpl implements PouchRepositoryCustom{
                 deleteIdList.add(pivot);
             }
         }
-        System.out.println(">>> insertIdList : "+insertIdList.toString());
-        System.out.println(">>> deleteIdList : "+deleteIdList.toString());
+//        System.out.println(">>> insertIdList : "+insertIdList.toString());
+//        System.out.println(">>> deleteIdList : "+deleteIdList.toString());
 
         for(Long id:insertIdList)
         {
@@ -207,15 +247,12 @@ public class PouchRepositoryImpl implements PouchRepositoryCustom{
             String now = LocalDateTimeUtil.getLocalDateTimeForFileName(LocalDateTime.now());
             PouchProductMapping pmd = new PouchProductMapping(pouch,pd,now);
             PouchProductMapping save = pouchProductMappingRepository.save(pmd);
-            System.out.println(">>>> saved : "+save.toString());
+//            System.out.println(">>>> saved : "+save.toString());
         }
-
         for(Long idProduct:deleteIdList)
         {
             pouchProductMappingRepository.deletePouchProductByIdPouchAndIdProduct(idPouch,idProduct);
         }
-
-
     }
 
 
@@ -234,7 +271,7 @@ public class PouchRepositoryImpl implements PouchRepositoryCustom{
 
     private Pouch createPouchObj(PouchRequestDto pouchRequestDto, Long id)
     {
-        Pouch pouch;
+        Pouch pouchObj;
         ImageContentDto imageContentDto = new ImageContentDto
                 (
                         pouchRequestDto.getImageContentDto().getOriginalFileName(),
@@ -243,29 +280,34 @@ public class PouchRepositoryImpl implements PouchRepositoryCustom{
                         pouchRequestDto.getImageContentDto().getFilePath(),
                         pouchRequestDto.getImageContentDto().getFileType()
                 );
-
+        //[1]
         PouchCategory pouchCategory = pouchCategoryRepository.findById(pouchRequestDto.getIdPouchCategory()).get();
+        //[2]
         AdminAccount adminAccount = adminAccountRepository.findById(pouchRequestDto.getIdRegister()).get();
         String createDate = LocalDateTimeUtil.getLocalDateTimeForFileName(LocalDateTime.now());
 
+        //[3]
+        Integer orderNum = queryFactory.select(pouch.orderNum).from(pouch).where(pouch.orderNum.isNotNull()).orderBy(pouch.orderNum.desc()).fetchFirst();
+//        System.out.println(">>>>>>> orderNum : " + orderNum);
+
         if(id==null)
         {
-            System.out.println(">>>>>>> create");
-            pouch = new Pouch(
+//            System.out.println(">>>>>>> create");
+            pouchObj = new Pouch(
                                 adminAccount,pouchRequestDto.getIsDisplay(),pouchCategory,
                                 pouchRequestDto.getTitle(), pouchRequestDto.getContent(),
-                                imageContentDto, createDate, pouchRequestDto.getOpenDate()
+                                imageContentDto, createDate, pouchRequestDto.getOpenDate(),(orderNum+1)
                               );
         }
         else//UPDATE
         {
-            System.out.println(">>>>>>> update");
-            pouch = new Pouch(id,adminAccount, pouchRequestDto.getIsDisplay(), pouchCategory,
+//            System.out.println(">>>>>>> update");
+            pouchObj = new Pouch(id,adminAccount, pouchRequestDto.getIsDisplay(), pouchCategory,
                                pouchRequestDto.getTitle(),pouchRequestDto.getContent(),
                                imageContentDto, createDate, pouchRequestDto.getOpenDate()
                             );
         }
-        return pouch;
+        return pouchObj;
     }
 
 

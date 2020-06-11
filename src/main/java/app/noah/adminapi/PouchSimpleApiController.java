@@ -5,6 +5,7 @@ import app.noah.dto.PouchRequestDto;
 import app.noah.dto.PouchSearchCondition;
 import app.noah.handler.ResultHandler;
 import app.noah.repository.pouch.PouchRepository;
+import app.noah.repository.pouch.category.PouchCategoryRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,8 @@ public class PouchSimpleApiController
 {
     private final PouchRepository pouchRepository;
 
+    private final PouchCategoryRepository pouchCategoryRepository;
+
     @ApiOperation(value="캐스트 목록 검색", response = PouchDto.class)
     @GetMapping("/api/v2/pouch")
     public ResponseEntity<?> getPouchList(PouchSearchCondition condition)
@@ -31,7 +34,7 @@ public class PouchSimpleApiController
         return new ResultHandler().handle(result);
     }
 
-    @ApiOperation(value="캐스트 상세", response = Object.class)
+    @ApiOperation(value="캐스트 상세정보", response = Object.class)
     @GetMapping("/api/v2/pouch/{id}")
     public ResponseEntity<?> getPouchDetail(@PathVariable Long id)
     {
@@ -43,10 +46,23 @@ public class PouchSimpleApiController
     @PostMapping("/api/v2/pouch")
     public ResponseEntity<?> insertPouch(@RequestBody PouchRequestDto pouchRequestDto)
     {
-        System.out.println("pouchRequestDto : "+pouchRequestDto.toString());
         Map<String,Object> result = pouchRepository.insertOrUpdatePouch(pouchRequestDto);
         return new ResultHandler().handle(result);
     }
 
-//    @ApiOperation(value = (value="",response = Object.class)
+    @ApiOperation(value="캐스트 카테고리 목록", response = Object.class)
+    @GetMapping("/api/v2/pouch/category")
+    public ResponseEntity<?> getSimplePouchCategoryList()
+    {
+        Map<String, Object> result = pouchCategoryRepository.simpleSearchPouchCategory();
+        return new ResultHandler().handle(result);
+    }
+
+    @ApiOperation(value="캐스트 목록 요약",response = Object.class)
+    @GetMapping("/api/v2/pouch/summary")
+    public ResponseEntity<?> summary()
+    {
+        Map<String, Object> result = pouchRepository.getSummary();
+        return new ResultHandler().handle(result);
+    }
 }

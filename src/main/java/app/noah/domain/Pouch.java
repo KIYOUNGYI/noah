@@ -98,7 +98,8 @@ public class Pouch
 
     public Pouch(){}
 
-    public Pouch(AdminAccount account, Boolean isDisplay, PouchCategory pouchCategory, String title, String content, ImageContentDto imageContentDto,String createDate, String startDate)
+    public Pouch(AdminAccount account, Boolean isDisplay, PouchCategory pouchCategory, String title, String content,
+                 ImageContentDto imageContentDto,String createDate, String startDate, Integer orderNum)
     {
         this.adminAccount = account;
         this.isDisplay = isDisplay;
@@ -108,15 +109,16 @@ public class Pouch
         this.fileOrgName = imageContentDto.getOriginalFileName();
         this.fileSaveName = imageContentDto.getUploadFileName();
         this.fileSize = imageContentDto.getFileSize();
-        this.fileDir = imageContentDto.getFileType();
+        this.fileDir = imageContentDto.getFilePath();
         this.fileType = imageContentDto.getFileType();
         this.createDate = createDate;//생성일
         this.startDate = startDate;//오픈일
-
+        this.orderNum = orderNum;
     }
 
 
-    public Pouch(Long id, AdminAccount adminAccount, Boolean isDisplay, PouchCategory pouchCategory, String title, String content, ImageContentDto imageContentDto, String createDate, String startDate)
+    public Pouch(Long id, AdminAccount adminAccount, Boolean isDisplay, PouchCategory pouchCategory, String title,
+                 String content, ImageContentDto imageContentDto, String createDate, String startDate)
     {
         this.id = id;
         this.isDisplay = isDisplay;
@@ -127,7 +129,7 @@ public class Pouch
         this.fileOrgName = imageContentDto.getOriginalFileName();
         this.fileSaveName = imageContentDto.getUploadFileName();
         this.fileSize = imageContentDto.getFileSize();
-        this.fileDir = imageContentDto.getFileType();
+        this.fileDir = imageContentDto.getFilePath();
         this.fileType = imageContentDto.getFileType();
         this.createDate = createDate;//생성일
         this.startDate = startDate;//오픈일

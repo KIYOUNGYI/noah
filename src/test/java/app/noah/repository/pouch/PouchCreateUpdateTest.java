@@ -78,18 +78,42 @@ public class PouchCreateUpdateTest
     @Test
     public void updatePouch()
     {
+        List<Long> productsList = new ArrayList<>();
+        productsList.add(1235l);
+        productsList.add(1233l);
+        ImageContentDto imageContentDtoDummy = new ImageContentDto("a", 999,"dummy","/dummy/dummy","image/jpeg");
+        PouchRequestDto pouchRequestDtoDummy = new PouchRequestDto();
+        pouchRequestDtoDummy.setIdRegister(636117l);//나 임시
+        pouchRequestDtoDummy.setIsDisplay(true);
+        pouchRequestDtoDummy.setIdPouchCategory(7l);//glowpick news
+        pouchRequestDtoDummy.setTitle("John Snow");
+        pouchRequestDtoDummy.setContent("You know nothing John Snow...");
+        String openDateDummy = LocalDateTimeUtil.getLocalDateTimeForFileName(LocalDateTime.now());
+        pouchRequestDtoDummy.setOpenDate(openDateDummy);
+        pouchRequestDtoDummy.setImageContentDto(imageContentDtoDummy);
+        pouchRequestDtoDummy.setProducts(productsList);
+
+        Map<String, Object> stringObjectMapDummy = pouchRepository.insertOrUpdatePouch(pouchRequestDtoDummy);
+        System.out.println(">>>> insert result : "+ stringObjectMapDummy.toString());
+        Object dataDummy = stringObjectMapDummy.get("data");
+        Long tempIdDummy = (Long)dataDummy;
+        System.out.println(">>>>> data : "+dataDummy);
+        System.out.println(">>>>> class :"+dataDummy.getClass());
+        System.out.println(">>>> tempIdDummy : "+tempIdDummy);
+        /********/
+
+
         List<Long> products = new ArrayList<>();
         //[DB 저장 데이터] [1233,1235]
 //        products.add(1238l);//추가
 //        products.add(1239l);//추가
 //        products.add(1233l);//그대로
-
-        products.add(1233l);
-        products.add(1235l);
+//        products.add(1233l);
+        products.add(1234l);
 
         ImageContentDto imageContentDto = new ImageContentDto("a", 999,"dummy","/dummy/dummy","image/jpeg");
         PouchRequestDto pouchRequestDto = new PouchRequestDto();
-        pouchRequestDto.setIdPouch(1063l);
+        pouchRequestDto.setIdPouch(tempIdDummy);
         pouchRequestDto.setIdRegister(636117l);//나 임시
         pouchRequestDto.setIsDisplay(true);
         pouchRequestDto.setIdPouchCategory(7l);//glowpick news
@@ -101,16 +125,13 @@ public class PouchCreateUpdateTest
         pouchRequestDto.setProducts(products);
         System.out.println(">>>>>> parameter : "+pouchRequestDto.toString());
         Map<String, Object> stringObjectMap = pouchRepository.insertOrUpdatePouch(pouchRequestDto);
+        Object data = stringObjectMap.get("data");
         System.out.println(">>>>>> string : "+ stringObjectMap.toString());
         System.out.println(">>>>>> class : "+ stringObjectMap.getClass());
-
-        Object data = stringObjectMap.get("data");
         System.out.println(">>>>> data : "+data);
         System.out.println(">>>>> class :"+data.getClass());
         Long tempId = (Long)data;
-
         Map<String, Object> byPouchId = pouchProductMappingRepository.findByPouchId(tempId);
-
         System.out.println(">>>> mapped products : "+ byPouchId.toString());
     }
 

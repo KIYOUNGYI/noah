@@ -208,4 +208,13 @@ public class PouchRepositorySelectTest
         Map<String, Object> pouchDetail = pouchRepository.getPouchDetail(1031l);
         System.out.println("pouchDetail:"+pouchDetail.toString());
     }
+
+    @Test
+    public void summary()
+    {
+        Map<String,Object> summary = pouchRepository.getSummary();
+        System.out.println(">>>> summary : " + summary.toString());
+    }
+
+
 }

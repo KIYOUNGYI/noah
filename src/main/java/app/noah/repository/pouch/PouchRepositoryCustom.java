@@ -14,4 +14,6 @@ public interface PouchRepositoryCustom
     Map<String,Object> searchPageComplex(PouchSearchCondition condition);
     Map<String,Object> getPouchDetail(Long idPouch);
     Map<String,Object> insertOrUpdatePouch(PouchRequestDto pouchRequestDto);
+
+    Map<String,Object> getSummary();
 }

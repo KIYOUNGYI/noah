@@ -27,11 +27,8 @@ public class PouchProductMappingRepositoryImpl implements PouchProductMappingCus
     public Map<String, Object> findByPouchId(Long idPouch)
     {
         HashMap<String, Object> result = new HashMap<>();
-//        List<PouchProductMapping> list = queryFactory.selectFrom(pouchProductMapping)
-//                .where(pouchProductMapping.pouch.id.eq(pouchId)).fetch();
         List<Long> list = queryFactory.select(pouchProductMapping.pouchProduct.idProduct).from(pouchProductMapping)
                 .where(pouchProductMapping.pouch.id.eq(idPouch)).fetch();
-
         result.put("data",list);
         return result;
     }
@@ -39,12 +36,13 @@ public class PouchProductMappingRepositoryImpl implements PouchProductMappingCus
     @Override
     public Map<String, Object> deletePouchProductByIdPouchAndIdProduct(Long idPouch, Long idProduct)
     {
-        JPADeleteClause where = queryFactory.delete(pouchProductMapping)
-                .where(pouchProductMapping.pouch.id.eq(idPouch), pouchProductMapping.pouchProduct.idProduct.eq(idProduct));
+        HashMap<String,Object> result = new HashMap<>();
+        long data = queryFactory.delete(pouchProductMapping)
+                .where(pouchProductMapping.pouch.id.eq(idPouch),
+                        pouchProductMapping.pouchProduct.idProduct.eq(idProduct)).execute();
 
-        System.out.println(">>>>>> delete result : " + where);
-
-        return null;
+        result.put("data",data);
+        return result;
     }
 
 }
