@@ -10,6 +10,7 @@ import app.noah.repository.AdminAccountRepository;
 import app.noah.repository.pouch.category.PouchCategoryRepository;
 //import app.noah.repository.pouch.pouchproduct.PouchProductRepository;
 import app.noah.repository.pouch.pouchproduct.PouchProductMappingRepository;
+import app.noah.utils.LocalDateTimeUtil;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static app.noah.domain.QPouchProductMapping.pouchProductMapping;
@@ -79,12 +81,10 @@ public class PouchRepositoryImpl implements PouchRepositoryCustom{
 
         OrderSpecifier[] orderSpecifiersArr = orderByClause(condition.getSort());
         QueryResults<PouchDto> contents = queryFactory.select(new QPouchDto(
-                pouch.id, pouch.pouchCategory.pouchCategoryText.as("category"), pouch.isDisplay,
-                pouch.pouchTitle, pouch.createDate, pouch.startDate,
-                pouch.pouchProductMappingsList.size(), pouch.hitsCount,
-                pouch.editerPick, pouch.adminAccount.idRegister, pouch.adminAccount.nickName,
-                pouch.recommendCount, pouch.pouchCommentList.size(),
-                pouch.fileOrgName,pouch.fileSize,pouch.fileSaveName, pouch.fileDir,pouch.fileType
+                pouch.id, pouch.pouchCategory.pouchCategoryText.as("category"), pouch.isDisplay, pouch.pouchTitle,
+                pouch.createDate, pouch.startDate, pouch.pouchProductMappingsList.size(), pouch.hitsCount,
+                pouch.editerPick, pouch.adminAccount.idRegister, pouch.adminAccount.nickName, pouch.recommendCount,
+                pouch.pouchCommentList.size(), pouch.fileOrgName, pouch.fileSize,pouch.fileSaveName, pouch.fileDir,pouch.fileType
         )).from(pouch).
                 where(
                         pouchTitleContains(condition.getTitle()),
@@ -152,51 +152,120 @@ public class PouchRepositoryImpl implements PouchRepositoryCustom{
     {
         Map<String, Object> result = new HashMap<>();
         Pouch pouch = null;
-
         Long id = pouchRequestDto.getIdPouch();
+
         if(id!=null)//update
         {
-            pouch = pouchRepository.findById(id).get();
-            System.out.println("pouch:"+pouch.toString());
-
+            pouch =createPouchObj(pouchRequestDto, id);
+            System.out.println(">>>> update : "+ pouch.toString());
+            pouchRepository.save(pouch);
+            updatePouchProducts(pouchRequestDto,pouch);
         }
         else//insert
         {
-            ImageContentDto imageContentDto = new ImageContentDto
-                    (
-                            pouchRequestDto.getImageContentDto().getOriginalFileName(),
-                            pouchRequestDto.getImageContentDto().getFileSize(),
-                            pouchRequestDto.getImageContentDto().getUploadFileName(),
-                            pouchRequestDto.getImageContentDto().getFilePath(),
-                            pouchRequestDto.getImageContentDto().getFileType()
-                    );
-
-            PouchCategory pouchCategory = pouchCategoryRepository.findById(pouchRequestDto.getIdPouchCategory()).get();
-            AdminAccount adminAccount = adminAccountRepository.findById(pouchRequestDto.getIdRegister()).get();
-
-            pouch = new Pouch(
-                    adminAccount,
-                    pouchRequestDto.getIsDisplay(),
-                    pouchCategory,
-                    pouchRequestDto.getTitle(),
-                    pouchRequestDto.getContent(),
-                    imageContentDto,
-                    pouchRequestDto.getOpenDate(),
-                    "YYYYMMDDHHmmss"
-            );
+            pouch = createPouchObj(pouchRequestDto,id);
             pouchRepository.save(pouch);
+            savePouchProducts(pouchRequestDto, pouch);
+        }
+        result.put("data", pouch.getId());
 
-            List<Long> products = pouchRequestDto.getProducts();
+        return result;
+    }
 
-            for(Long productId : products)
+    private void updatePouchProducts(PouchRequestDto pouchRequestDto, Pouch pouch)
+    {
+        Long idPouch = pouch.getId();
+        List<Long> givenList = pouchRequestDto.getProducts();
+        Map<String, Object> productsByPouchId = pouchProductMappingRepository.findByPouchId(idPouch);
+        List<Long> dbList = (List<Long>) productsByPouchId.get("data");
+
+        ArrayList<Long> insertIdList = new ArrayList<>();
+        ArrayList<Long> deleteIdList = new ArrayList<>();
+
+        for(Long givenId:givenList)
+        {
+            Long pivot = givenId;
+            if(!dbList.contains(pivot))
             {
-                Product pd = productRepository.findById(productId).get();
-                PouchProductMapping pmd = new PouchProductMapping(pouch,pd,"created_date");
-                pouchProductMappingRepository.save(pmd);
+                insertIdList.add(pivot);
             }
         }
-        result.put("data", pouch);
-        return result;
+        for(Long givenId:dbList)
+        {
+            Long pivot = givenId;
+            if(!givenList.contains(pivot))
+            {
+                deleteIdList.add(pivot);
+            }
+        }
+        System.out.println(">>> insertIdList : "+insertIdList.toString());
+        System.out.println(">>> deleteIdList : "+deleteIdList.toString());
+
+        for(Long id:insertIdList)
+        {
+            Product pd = productRepository.findById(id).get();
+            String now = LocalDateTimeUtil.getLocalDateTimeForFileName(LocalDateTime.now());
+            PouchProductMapping pmd = new PouchProductMapping(pouch,pd,now);
+            PouchProductMapping save = pouchProductMappingRepository.save(pmd);
+            System.out.println(">>>> saved : "+save.toString());
+        }
+
+        for(Long idProduct:deleteIdList)
+        {
+            pouchProductMappingRepository.deletePouchProductByIdPouchAndIdProduct(idPouch,idProduct);
+        }
+
+
+    }
+
+
+
+    private void savePouchProducts(PouchRequestDto pouchRequestDto, Pouch pouch) {
+        List<Long> products = pouchRequestDto.getProducts();
+        for(Long productId : products)
+        {
+            Product pd = productRepository.findById(productId).get();
+            String now = LocalDateTimeUtil.getLocalDateTimeForFileName(LocalDateTime.now());
+            PouchProductMapping pmd = new PouchProductMapping(pouch,pd,now);
+            pouchProductMappingRepository.save(pmd);
+        }
+    }
+
+
+    private Pouch createPouchObj(PouchRequestDto pouchRequestDto, Long id)
+    {
+        Pouch pouch;
+        ImageContentDto imageContentDto = new ImageContentDto
+                (
+                        pouchRequestDto.getImageContentDto().getOriginalFileName(),
+                        pouchRequestDto.getImageContentDto().getFileSize(),
+                        pouchRequestDto.getImageContentDto().getUploadFileName(),
+                        pouchRequestDto.getImageContentDto().getFilePath(),
+                        pouchRequestDto.getImageContentDto().getFileType()
+                );
+
+        PouchCategory pouchCategory = pouchCategoryRepository.findById(pouchRequestDto.getIdPouchCategory()).get();
+        AdminAccount adminAccount = adminAccountRepository.findById(pouchRequestDto.getIdRegister()).get();
+        String createDate = LocalDateTimeUtil.getLocalDateTimeForFileName(LocalDateTime.now());
+
+        if(id==null)
+        {
+            System.out.println(">>>>>>> create");
+            pouch = new Pouch(
+                                adminAccount,pouchRequestDto.getIsDisplay(),pouchCategory,
+                                pouchRequestDto.getTitle(), pouchRequestDto.getContent(),
+                                imageContentDto, createDate, pouchRequestDto.getOpenDate()
+                              );
+        }
+        else//UPDATE
+        {
+            System.out.println(">>>>>>> update");
+            pouch = new Pouch(id,adminAccount, pouchRequestDto.getIsDisplay(), pouchCategory,
+                               pouchRequestDto.getTitle(),pouchRequestDto.getContent(),
+                               imageContentDto, createDate, pouchRequestDto.getOpenDate()
+                            );
+        }
+        return pouch;
     }
 
 

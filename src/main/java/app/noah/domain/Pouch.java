@@ -19,7 +19,7 @@ import static javax.persistence.FetchType.LAZY;
 @Entity
 @Table(name="pouch",catalog = "user_glowmee", schema = "user_glowmee")
 @Getter @Setter
-@ToString(of={"id","pouchTitle"})
+@ToString(of={"id","pouchTitle","pouchText"})
 public class Pouch
 {
     /**
@@ -96,8 +96,29 @@ public class Pouch
     @Column(name="hits_count")
     private Long hitsCount=0l;
 
-    public Pouch(AdminAccount adminAccount, Boolean isDisplay, PouchCategory pouchCategory, String title, String content, ImageContentDto imageContentDto, String createDate, String startDate)
+    public Pouch(){}
+
+    public Pouch(AdminAccount account, Boolean isDisplay, PouchCategory pouchCategory, String title, String content, ImageContentDto imageContentDto,String createDate, String startDate)
     {
+        this.adminAccount = account;
+        this.isDisplay = isDisplay;
+        this.pouchCategory = pouchCategory;
+        this.pouchTitle =title;
+        this.pouchText = content;
+        this.fileOrgName = imageContentDto.getOriginalFileName();
+        this.fileSaveName = imageContentDto.getUploadFileName();
+        this.fileSize = imageContentDto.getFileSize();
+        this.fileDir = imageContentDto.getFileType();
+        this.fileType = imageContentDto.getFileType();
+        this.createDate = createDate;//생성일
+        this.startDate = startDate;//오픈일
+
+    }
+
+
+    public Pouch(Long id, AdminAccount adminAccount, Boolean isDisplay, PouchCategory pouchCategory, String title, String content, ImageContentDto imageContentDto, String createDate, String startDate)
+    {
+        this.id = id;
         this.isDisplay = isDisplay;
         this.pouchCategory = pouchCategory;
         this.pouchTitle =title;
@@ -108,8 +129,8 @@ public class Pouch
         this.fileSize = imageContentDto.getFileSize();
         this.fileDir = imageContentDto.getFileType();
         this.fileType = imageContentDto.getFileType();
-        this.createDate = createDate;
-        this.startDate = startDate;
+        this.createDate = createDate;//생성일
+        this.startDate = startDate;//오픈일
     }
 
 

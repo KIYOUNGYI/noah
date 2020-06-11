@@ -1,6 +1,8 @@
 package app.noah.repository.pouch.pouchproduct;
 
 import app.noah.domain.PouchProductMapping;
+import app.noah.dto.PouchProductDto;
+import app.noah.dto.QPouchProductDto;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -21,14 +23,23 @@ public class PouchProductMappingRepositoryImpl implements PouchProductMappingCus
     }
 
     @Override
-    public Map<String, Object> findByPouchId(Long pouchId)
+    public Map<String, Object> findByPouchId(Long idPouch)
     {
         HashMap<String, Object> result = new HashMap<>();
-        List<PouchProductMapping> list = queryFactory.selectFrom(pouchProductMapping)
-                .where(pouchProductMapping.pouch.id.eq(pouchId)).fetch();
+//        List<PouchProductMapping> list = queryFactory.selectFrom(pouchProductMapping)
+//                .where(pouchProductMapping.pouch.id.eq(pouchId)).fetch();
+        List<Long> list = queryFactory.select(pouchProductMapping.pouchProduct.idProduct).from(pouchProductMapping)
+                .where(pouchProductMapping.pouch.id.eq(idPouch)).fetch();
 
-        System.out.println("findByPouchId result : "+list.toString());
-
+        result.put("data",list);
         return result;
     }
+
+    @Override
+    public Map<String, Object> deletePouchProductByIdPouchAndIdProduct(Long idPouch, Long idProduct)
+    {
+//        queryFactory.delete().where()
+        return null;
+    }
+
 }
