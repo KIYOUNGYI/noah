@@ -41,4 +41,18 @@ public class PouchCategoryRepositoryImpl implements PouchCategoryRepositoryCusto
         result.put("data",fetch);
         return result;
     }
+
+    @Override
+    public Map<String, Object> complexSearchPouchCategory() {
+
+        return null;
+    }
+
+    @Override
+    public Map<String, Object> getSummary()
+    {
+        return null;
+    }
+
+
 }
