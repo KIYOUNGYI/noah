@@ -3,6 +3,7 @@ package app.noah.repository.pouch.pouchproduct;
 import app.noah.domain.PouchProductMapping;
 import app.noah.dto.PouchProductDto;
 import app.noah.dto.QPouchProductDto;
+import com.querydsl.jpa.impl.JPADeleteClause;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -38,7 +39,11 @@ public class PouchProductMappingRepositoryImpl implements PouchProductMappingCus
     @Override
     public Map<String, Object> deletePouchProductByIdPouchAndIdProduct(Long idPouch, Long idProduct)
     {
-//        queryFactory.delete().where()
+        JPADeleteClause where = queryFactory.delete(pouchProductMapping)
+                .where(pouchProductMapping.pouch.id.eq(idPouch), pouchProductMapping.pouchProduct.idProduct.eq(idProduct));
+
+        System.out.println(">>>>>> delete result : " + where);
+
         return null;
     }
 
