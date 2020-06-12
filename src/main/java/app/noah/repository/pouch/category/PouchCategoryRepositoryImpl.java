@@ -51,7 +51,25 @@ public class PouchCategoryRepositoryImpl implements PouchCategoryRepositoryCusto
     @Override
     public Map<String, Object> getSummary()
     {
-        return null;
+        HashMap<String,Object> result = new HashMap<>();
+        List<Tuple> fetch = queryFactory.select(pouchCategory.count(),
+                                                queryFactory.select(pouchCategory.count())
+                                                        .from(pouchCategory)
+                                                        .where(pouchCategory.isDisplay.eq(true)),
+                                                queryFactory.select(pouchCategory.count())
+                                                        .from(pouchCategory)
+                                                        .where(pouchCategory.isDisplay.eq(false))
+                                                )
+                                        .from(pouchCategory).fetch();
+        Tuple tuple = fetch.get(0);
+        Long total = tuple.get(0,Long.class);
+        Long active = tuple.get(1,Long.class);
+        Long inactive = tuple.get(2,Long.class);
+        result.put("total",total);
+        result.put("active",active);
+        result.put("inactive",inactive);
+        return result;
+
     }
 
 

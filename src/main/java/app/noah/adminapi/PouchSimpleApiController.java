@@ -65,4 +65,13 @@ public class PouchSimpleApiController
         Map<String, Object> result = pouchRepository.getSummary();
         return new ResultHandler().handle(result);
     }
+
+    @ApiOperation(value="캐스트 카테고리 목록 요약",response = Object.class)
+    @GetMapping("/api/v2/pouch/category/summary")
+    public ResponseEntity<?> categorySummary()
+    {
+        Map<String,Object> result = pouchCategoryRepository.getSummary();
+        return new ResultHandler().handle(result);
+    }
+
 }
