@@ -1,11 +1,13 @@
 //v
 package app.noah.domain;
 
+import app.noah.utils.LocalDateTimeUtil;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +15,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @Table(name="pouchcategory", catalog = "user_glowmee", schema="user_glowmee")
-@ToString(of={"idPouchCategory","pouchCategoryText"})
+@ToString(of={"idPouchCategory","pouchCategoryText","isDisplay"})
 public class PouchCategory
 {
     /**
@@ -41,10 +43,31 @@ public class PouchCategory
 
     private String pouchCategoryText;
     private Long sortKey;
-    private boolean isDisplay;
+    private Boolean isDisplay;
     @Column(name="create_date")
     private String createDate;
     @Column(name="modified_date")
     private String modifiedDate;
+
+    //insert
+    public PouchCategory(String pouchCategoryText, Long sortKey)
+    {
+        this.pouchCategoryText = pouchCategoryText;
+        this.sortKey = sortKey;
+        String now = LocalDateTimeUtil.getLocalDateTimeForFileName(LocalDateTime.now());
+        this.createDate = now;
+        this.isDisplay = true;
+    }
+
+    //update
+    public void update(String pouchCategoryText,Long sortKey,Boolean isDisplay)
+    {
+        this.pouchCategoryText = pouchCategoryText;
+        this.sortKey = sortKey;
+        String now = LocalDateTimeUtil.getLocalDateTimeForFileName(LocalDateTime.now());
+        this.modifiedDate = now;
+        this.isDisplay = isDisplay;
+    }
+
 
 }
