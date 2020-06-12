@@ -52,6 +52,7 @@ public class PouchCategoryRepositoryImpl implements PouchCategoryRepositoryCusto
         OrderSpecifier[] orderSpecifiers = orderByClause(condition.getSort());
         QueryResults<PouchCategoryDetailDto> contents = queryFactory.select(new QPouchCategoryDetailDto
                 (
+                        pouchCategory.idPouchCategory,
                         pouchCategory.sortKey,
                         pouchCategory.pouchCategoryText,
                         pouchCategory.pouches.size(),
@@ -138,6 +139,8 @@ public class PouchCategoryRepositoryImpl implements PouchCategoryRepositoryCusto
         return result;
 
     }
+
+
 
 
 }
