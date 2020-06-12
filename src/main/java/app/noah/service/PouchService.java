@@ -32,6 +32,7 @@ public class PouchService
         return result;
     }
 
+    // 신기하게 save 코드 없어도 잘 되네
     @Transactional//write(오버라이딩)
     public Map<String,Object> updatePouchCategory(Long id, PouchCategoryRequestDto dto)
     {

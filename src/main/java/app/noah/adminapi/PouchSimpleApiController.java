@@ -25,13 +25,14 @@ public class PouchSimpleApiController
 
     private final PouchService pouchService;
 
+    /********************** 캐스트 등록,수정,조회 ***************************/
+
     @ApiOperation(value="캐스트 목록 검색", response = PouchDto.class)
     @GetMapping("/admin-api/v2/pouch")
     public ResponseEntity<?> getPouchList(PouchSearchCondition condition)
     {
         if(condition.getOffset()==null) condition.setOffset(0l);
         if(condition.getLimit()==null) condition.setLimit(10l);
-        System.out.println(">> condition:"+condition.toString());
         Map<String,Object> result = pouchRepository.searchPageSimple(condition);
         return new ResultHandler().handle(result);
     }
@@ -60,7 +61,7 @@ public class PouchSimpleApiController
         return new ResultHandler().handle(result);
     }
 
-    /********************** 캐스트 카테고리 목록 ***************************/
+    /********************** 캐스트 카테고리 등록,수정,조회 ***************************/
 
     @ApiOperation(value="캐스트 카테고리 목록 상태 요약",response = Object.class)
     @GetMapping("/admin-api/v2/pouch/category/status")
